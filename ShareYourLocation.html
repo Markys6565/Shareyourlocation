@@ -1,0 +1,137 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Share Your Location Link</title>
+  <style>
+    body {
+      font-family: 'Inter', Arial, sans-serif;
+      text-align: center;
+      margin: 0;
+      padding: 50px 0;
+      background-color: #e6fff2;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: auto;
+      padding: 20px;
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    h1 {
+      color: #053A3D;
+      font-size: 2.5em;
+      font-weight: bold;
+      margin: 0;
+      padding-bottom: 16px;
+    }
+
+    h2 {
+      color: #516465;
+      font-size: 1.75em;
+      font-weight: normal;
+      margin: 0;
+      padding-bottom: 32px;
+    }
+
+    .instructions {
+      font-size: 1.5em;
+      font-weight: bold;
+      margin: 20px 0;
+    }
+
+    #location {
+      font-size: 1em;
+      margin: 20px;
+    }
+
+    .cta-button {
+      display: block;
+      margin: 16px auto;
+      padding: 24px 40px;
+      font-size: 1.5em;
+      background-color: #0000ff;
+      color: #ffffff;
+      text-decoration: none;
+      border-radius: 16px;
+      border: none;
+      cursor: pointer;
+    }
+
+    .cta-button:hover {
+      background-color: #0056b3;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Mobile Truck &amp; Trailer Repair</h1>
+    <h2>Click the button below to share your location.</h2>
+    <button class="cta-button" onclick="getLocation('Android')">Share Location (Android)</button>
+    <button class="cta-button" onclick="getLocation('iOS')">Share Location (iPhone)</button>
+    <p class="instructions">Instructions:</p>
+    <ol class="instructions">
+      <li>Choose your Phone and ALLOW Location Request</li>
+      <li>When the SMS menu opens - click SEND</li>
+    </ol>
+    <p id="location"></p>
+  </div>
+
+  <script>
+    function getLocation(device) {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          position => sendCoordinates(position, device),
+          handleLocationError
+        );
+      } else {
+        alert("Geolocation is not supported by this browser.");
+      }
+    }
+
+    function sendCoordinates(position, device) {
+      const latitude = position.coords.latitude.toString();
+      const longitude = position.coords.longitude.toString();
+      const phoneNumber = "2156074047";
+      const smsText = `${latitude},${longitude}`;
+      const smsUrl = `sms:${phoneNumber}?body=${encodeURIComponent(smsText)}`;
+
+      // Debugging: Check the SMS URL
+      console.log("SMS URL:", smsUrl);
+
+      if (device === 'iOS' && /iphone|ipad|ipod/.test(navigator.userAgent.toLowerCase())) {
+        window.location.href = smsUrl;
+      } else {
+        displayCoordinates(latitude, longitude);
+      }
+    }
+
+    function displayCoordinates(latitude, longitude) {
+      const locationElement = document.getElementById("location");
+      locationElement.textContent = `Latitude: ${latitude} | Longitude: ${longitude}`;
+    }
+
+    function handleLocationError(error) {
+      switch (error.code) {
+        case error.PERMISSION_DENIED:
+          alert("User denied the request for Geolocation.");
+          break;
+        case error.POSITION_UNAVAILABLE:
+          alert("Location information is unavailable.");
+          break;
+        case error.TIMEOUT:
+          alert("The request to get user location timed out.");
+          break;
+        case error.UNKNOWN_ERROR:
+          alert("An unknown error occurred.");
+          break;
+      }
+    }
+  </script>
+</body>
+</html>
